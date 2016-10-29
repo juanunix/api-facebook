@@ -28,7 +28,7 @@ passport.use(new FacebookStrategy({
 		User.findOrCreate({
 			uid: profile.id
 		},{
-			name: provider.displayName,
+			name: profile.displayName,
 			provider: 'facebook',
 			accessToken
 		}, (err, user) => {
@@ -47,7 +47,11 @@ passport.deserializeUser(function(user, done){
 
 
 app.get('/', (req, res) => {
-  res.render("index");
+	if(typeof req.session.passport == "undefined" || !req.session.passport.user){
+	  res.render("index");
+  } else {
+	  res.render("home");
+  }
 });
 
 app.get('/auth/facebook', passport.authenticate('facebook', {}));
@@ -59,6 +63,11 @@ app.get('/auth/facebook/callback',
 		res.redirect('/');
 	}
 );
+
+app.get('/auth/close', (req, res) => {
+	req.logout();
+	res.redirect('/');
+})
 
 
 
