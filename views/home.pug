@@ -26,3 +26,12 @@ html
 				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
 				ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
 				sunt in culpa qui officia deserunt mollit anim id est laborum.
+				.row
+					.col-xs-6(style="float:none;")
+						form(action="/logros" method="POST")
+							input(type="text" class="form-control"
+							placeholder="Que impresionaste logro quieres compartir"
+							name="logro"
+							)
+							input(type="submit" value="Compartir logro"
+							class="btn btn-info" style="margin-top:20px;")

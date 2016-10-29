@@ -45,16 +45,7 @@ passport.deserializeUser(function(user, done){
 	done(null, user);
 });
 
-
-app.get('/', (req, res) => {
-	if(typeof req.session.passport == "undefined" || !req.session.passport.user){
-	  res.render("index");
-  } else {
-	  res.render("home");
-  }
-});
-
-app.get('/auth/facebook', passport.authenticate('facebook', {}));
+app.get('/auth/facebook', passport.authenticate('facebook', {scope:['publish_actions', 'user_friends']}));
 
 app.get('/auth/facebook/callback',
 	passport.authenticate('facebook', {failureRediredct: '/'}),
@@ -69,8 +60,22 @@ app.get('/auth/close', (req, res) => {
 	res.redirect('/');
 })
 
+app.get('/', (req, res) => {
+	if(typeof req.session.passport == "undefined" || !req.session.passport.user){
+	  res.render("index");
+  } else {
+	  res.render("home");
+  }
+});
 
-
+app.post('/logros', (req, res) =>{
+	const logro = req.body.logro;
+	graph.setAccessToken(req.session.passport.user.accessToken);
+	graph.post('/feed', {message: logro}, (err, response) => {
+		console.log(response);
+		res.redirect('/');
+	});
+});
 
 app.listen(8000, () => {
   console.log('Listening on port 8000');
