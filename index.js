@@ -77,6 +77,22 @@ app.post('/logros', (req, res) =>{
 	});
 });
 
+app.get('/friends', (req, res) => {
+	graph.setAccessToken(req.session.passport.user.accessToken);
+	graph.get('/me/friends', (err, response) => {
+		if(err) console.log("Error", err);
+
+		const ids = response.data.map(f => f.id);
+		User.find({
+			'uid':{
+				$in: ids
+			}
+		}, (err, users) => {
+			res.render('friends', {users });
+		});
+	});
+});
+
 app.listen(8000, () => {
   console.log('Listening on port 8000');
 });
