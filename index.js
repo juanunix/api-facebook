@@ -5,8 +5,8 @@ const passport = require('passport');
 const cookieSession = require('cookie-session');
 const FacebookStrategy = require('passport-facebook').Strategy;
 const graph = require('fbgraph');
-
-const config = require('./config/config.js');
+const config = require('./config/config');
+const User = require('./models/user');
 
 const app = express();
 
@@ -19,27 +19,47 @@ app.use(passport.session());
 
 app.set('view engine', 'pug');
 
-app.get('/', (req, res) => {
-  console.log(JSON.stringify(config));
-  res.render("index");
-});
-
-//Configurate passport
-	//Strategy
 passport.use(new FacebookStrategy({
 		clientID: config.facebookStrategy.id,
 		clientSecret: config.facebookStrategy.secret,
-		callbackUrl: config.facebookStrategy.callbackUrl
+		callbackURL: config.facebookStrategy.callbackURL,
 	}, function(accessToken, refreshToken, profile, cb)
 	{
-		const user = { accessToken, profile}
-
-		cb(null, user);
+		User.findOrCreate({
+			uid: profile.id
+		},{
+			name: provider.displayName,
+			provider: 'facebook',
+			accessToken
+		}, (err, user) => {
+			cb(null, user);
+		})
 	}
 ));
-	//How to store user in the session
 
-	//How to take the user of the session
+passport.serializeUser(function(user, done){
+	done(null, user);
+});
+
+passport.deserializeUser(function(user, done){
+	done(null, user);
+});
+
+
+app.get('/', (req, res) => {
+  res.render("index");
+});
+
+app.get('/auth/facebook', passport.authenticate('facebook', {}));
+
+app.get('/auth/facebook/callback',
+	passport.authenticate('facebook', {failureRediredct: '/'}),
+	function(req, res){
+		console.log(JSON.stringify(req.session));
+		res.redirect('/');
+	}
+);
+
 
 
 
