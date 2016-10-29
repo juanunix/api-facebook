@@ -1,0 +1,12 @@
+{
+  "name": "api-facebook",
+  "version": "1.0.0",
+  "description": "Example about consuming API Facebook",
+  "main": "index.js",
+  "repository": {
+    "url": "https://github.com/jfelipebc/api-facebook",
+    "type": "git"
+  },
+  "author": "Juan Felipe <juanfelipebedoyacardona@gmail.com>",
+  "license": "MIT"
+}
